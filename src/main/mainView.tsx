@@ -1,11 +1,11 @@
 "use client";
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid, Input, TextField } from "@mui/material";
 import { useState } from "react";
 import { makeMaze } from "./components/makeMaze";
 
 export default function MainView() {
-  const [maxX, setMaxX] = useState(0);
-  const [maxY, setMaxY] = useState(0);
+  const [maxX, setMaxX] = useState(1);
+  const [maxY, setMaxY] = useState(1);
   const [mazeArr, setMazeArr] = useState([]);
 
   const handleMakeMaze = () => {
@@ -14,27 +14,29 @@ export default function MainView() {
 
   return (
     <Grid container>
-      <Grid item>
-        <Grid item container>
-          <Grid item>
-            <TextField
+      <Grid item xs={12}>
+        <Grid item container spacing={2}>
+          <Grid item xs={4}>
+            <Input
+              fullWidth
               type="number"
-              variant="filled"
               value={maxX}
               onChange={(e) => setMaxX(parseInt(e.target.value))}
               sx={{ bgcolor: "white" }}
               color="error"
-            ></TextField>
+              slotProps={{ input: { min: 1, max: 10 } }}
+            ></Input>
           </Grid>
 
-          <Grid item>
-            <TextField
+          <Grid item xs={4}>
+            <Input
+              fullWidth
               type="number"
-              variant="filled"
               value={maxY}
               onChange={(e) => setMaxY(parseInt(e.target.value))}
               sx={{ bgcolor: "white" }}
-            ></TextField>
+              slotProps={{ input: { min: 1, max: 10 } }}
+            ></Input>
           </Grid>
         </Grid>
         <Button onClick={() => handleMakeMaze()}>make Maze</Button>
