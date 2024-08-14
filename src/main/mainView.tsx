@@ -2,14 +2,16 @@
 import { Button, Grid, Input, TextField } from "@mui/material";
 import { useState } from "react";
 import { makeMaze } from "./components/makeMaze";
+import { Maze } from "./constants/mazeType";
+import MazeSet from "./components/mazeSet";
 
 export default function MainView() {
   const [maxX, setMaxX] = useState(1);
   const [maxY, setMaxY] = useState(1);
-  const [mazeArr, setMazeArr] = useState([]);
+  const [mazeArr, setMazeArr] = useState<Maze[][]>([]);
 
   const handleMakeMaze = () => {
-    makeMaze(maxX, maxY);
+    setMazeArr(makeMaze(maxX, maxY));
   };
 
   return (
@@ -41,6 +43,12 @@ export default function MainView() {
         </Grid>
         <Button onClick={() => handleMakeMaze()}>make Maze</Button>
       </Grid>
+
+      {mazeArr.length > 0 && (
+        <Grid item container>
+          <MazeSet maze={mazeArr}></MazeSet>
+        </Grid>
+      )}
     </Grid>
   );
 }
