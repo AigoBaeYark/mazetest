@@ -1,5 +1,6 @@
 export interface Maze {
   isWall: boolean;
   isView: boolean;
-  isFlag?: boolean;
+  isGoal?: boolean;
+  isStart?: boolean;
 }

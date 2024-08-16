@@ -11,8 +11,17 @@ export default function MazeSet({ maze }: Props) {
       {maze.map((y, indexY) => (
         <Grid item key={`${indexY}`}>
           {y.map((x, indexX) => (
-            <Typography key={`${indexX}-${indexY}`}>
-              {x.isWall ? "wall" : "road"}
+            <Typography
+              key={`${indexX}-${indexY}`}
+              sx={{ color: x.isGoal ? "red" : x.isStart ? "green" : "black" }}
+            >
+              {x.isGoal
+                ? "Goal"
+                : x.isStart
+                ? "start"
+                : x.isWall
+                ? "wall"
+                : "road"}
             </Typography>
           ))}
         </Grid>
