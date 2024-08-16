@@ -1,43 +1,71 @@
 import { Maze } from "../constants/mazeType";
 
+const WALL_THRESHOLD = 5; // 벽이 생성될 확률을 조정할 수 있는 상수
+
 export function makeMaze(maxX: number, maxY: number) {
-  let res: Maze[][] = Array.from(new Array(maxX), () =>
-    new Array(maxY).fill({ isWall: false, isView: false, isGoal: false })
+  const createCell = (rand: number): Maze => ({
+    isWall: rand > WALL_THRESHOLD,
+    isView: false,
+    isGoal: false,
+  });
+
+  const res: Maze[][] = Array.from({ length: maxX }, () =>
+    Array.from({ length: maxY }, () => createCell(randomInt(10)))
   );
 
-  const goalX = Math.floor(reRoll() % maxX);
-  const goalY = Math.floor(reRoll() % maxY);
-  console.log(`goalX: ${goalX}, goalY: ${goalY}`);
+  const [goalX, goalY] = [randomInt(maxX), randomInt(maxY)];
+  let [startX, startY] = [randomInt(maxX), randomInt(maxY)];
 
-  let startX = Math.floor(reRoll() % maxX);
-  while (startX === goalX) startX = Math.floor(reRoll() % maxX);
-  let startY = Math.floor(reRoll() % maxY);
-  while (startY === goalY) startY = Math.floor(reRoll() % maxY);
-  console.log(`startX: ${startX}, startY: ${startY}`);
+  while (startX === goalX) startX = randomInt(maxX);
+  while (startY === goalY) startY = randomInt(maxY);
 
+  res[goalX][goalY].isGoal = true;
   res[startX][startY].isStart = true;
 
-  res.forEach((y, indexY) =>
-    y.forEach((x, indexX) => {
-      const rand =
-        Math.floor(Math.random() * new Date().getTime() * Math.random()) % 10;
-      if (indexY === goalY && indexX === goalX) {
-        x.isGoal = true;
-      } else if (indexY === startY && indexX === startX) {
-        x.isStart = true;
-      } else if (rand > 5) {
-        res[indexY][indexX] = { isWall: true, isView: false };
-      } else {
-        res[indexY][indexX] = { isWall: false, isView: false };
+  const startRoad = startingRoadCnt(maxX - 1, maxY - 1, startX, startY);
+  console.log("startRoad: ", startRoad);
+
+  res.forEach((row, indexX) =>
+    row.forEach((cell, indexY) => {
+      if (
+        (indexX === goalX && indexY === goalY) ||
+        (indexX === startX && indexY === startY)
+      ) {
+        return; // 골 지점과 생성 지점은 건너뜀
       }
+      const rand = randomInt(10);
+      cell.isWall = rand > WALL_THRESHOLD;
     })
   );
 
-  res.forEach((y, indexY) => y.forEach((x, indexX) => x));
   console.log(res);
   return res;
 }
 
-const reRoll = () => {
-  return Math.random() * new Date().getTime();
+const randomInt = (max: number) => Math.floor(Math.random() * max);
+
+const startingRoadCnt = (
+  maxX: number,
+  maxY: number,
+  startX: number,
+  startY: number
+) => {
+  const corners = [
+    [0, 0],
+    [maxX, maxY],
+    [maxX, 0],
+    [0, maxY],
+  ];
+  const edges = [
+    [0, 1],
+    [1, 0],
+    [maxX, 1],
+    [maxX, maxY - 1],
+    [1, maxY],
+    [maxX - 1, maxY],
+  ];
+
+  if (corners.some(([x, y]) => x === startX && y === startY)) return 2;
+  if (edges.some(([x, y]) => x === startX && y === startY)) return 3;
+  return 4;
 };
